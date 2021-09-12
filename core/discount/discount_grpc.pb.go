@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.1.0
 // - protoc             v3.17.3
-// source: discount/proto/discount.proto
+// source: proto/discount.proto
 
 package discount
 
@@ -101,5 +101,5 @@ var Discount_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "discount/proto/discount.proto",
+	Metadata: "proto/discount.proto",
 }

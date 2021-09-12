@@ -2,7 +2,7 @@ package clients
 
 import (
 	"context"
-	"github.com/guil95/grpcApi/gen/discount"
+	"github.com/guil95/grpcApi/core/discount"
 	pkg "github.com/guil95/grpcApi/pkg/grpc"
 	"google.golang.org/grpc"
 	"log"
