@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"encoding/json"
-	"github.com/guil95/grpcApi/core/domain"
+	"github.com/guil95/grpcApi/core/checkout/domain"
 )
 
 type FileRepository struct {

@@ -2,22 +2,22 @@ package http
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/guil95/grpcApi/core/domain"
-	"github.com/guil95/grpcApi/core/infra/http/clients"
-	"github.com/guil95/grpcApi/core/infra/repositories"
-	application "github.com/guil95/grpcApi/core/use_cases"
+	"github.com/guil95/grpcApi/core/checkout/domain"
+	"github.com/guil95/grpcApi/core/checkout/infra/http/clients"
+	"github.com/guil95/grpcApi/core/checkout/infra/repositories"
+	"github.com/guil95/grpcApi/core/checkout/use_cases"
 	"log"
 	"net/http"
 )
 
 func CreateApi(app *fiber.App, file []byte) {
 	app.Post("/checkout", func(ctx *fiber.Ctx) error {
-		checkout(ctx, application.NewService(clients.NewDiscountGrpcClient(), repositories.NewFileRepository(file)))
+		checkout(ctx, use_cases.NewService(clients.NewDiscountGrpcClient(), repositories.NewFileRepository(file)))
 		return nil
 	})
 }
 
-func checkout(ctx *fiber.Ctx, service *application.Service) {
+func checkout(ctx *fiber.Ctx, service *use_cases.CreateCheckoutUseCase) {
 	var chartPayload = new(domain.Chart)
 
 	if err := ctx.BodyParser(chartPayload); err != nil {

@@ -2,22 +2,22 @@ package use_cases
 
 import (
 	"fmt"
-	"github.com/guil95/grpcApi/core/domain"
+	"github.com/guil95/grpcApi/core/checkout/domain"
 	"log"
 	"sync"
 )
 
-type Service struct {
+type CreateCheckoutUseCase struct {
 	client     domain.Client
 	repository domain.Repository
 }
 
-func NewService(client domain.Client, repository domain.Repository) *Service {
-	return &Service{client: client, repository: repository}
+func NewService(client domain.Client, repository domain.Repository) *CreateCheckoutUseCase {
+	return &CreateCheckoutUseCase{client: client, repository: repository}
 }
 var order domain.Order
 
-func (s *Service) Checkout(chart *domain.Chart) (*domain.Order, error){
+func (s *CreateCheckoutUseCase) Checkout(chart *domain.Chart) (*domain.Order, error){
 	var wg sync.WaitGroup
 
 	s.mergeProducts(chart)
@@ -50,7 +50,7 @@ func (s *Service) Checkout(chart *domain.Chart) (*domain.Order, error){
 	return o, nil
 }
 
-func (s *Service) verifyGiftProducts(products []domain.Product) error {
+func (s *CreateCheckoutUseCase) verifyGiftProducts(products []domain.Product) error {
 	for _, product := range products {
 		if product.Gift == true {
 			return domain.ProductGiftError
@@ -60,13 +60,13 @@ func (s *Service) verifyGiftProducts(products []domain.Product) error {
 	return nil
 }
 
-func (s *Service) retrieveProductsByChart(chart *domain.Chart) []domain.Product {
+func (s *CreateCheckoutUseCase) retrieveProductsByChart(chart *domain.Chart) []domain.Product {
 	products := s.repository.GetProductsByChart(chart)
 
 	return products
 }
 
-func (s *Service) applyDiscount(product domain.Product) (domain.Product, int32){
+func (s *CreateCheckoutUseCase) applyDiscount(product domain.Product) (domain.Product, int32){
 	discount, _ := s.client.GetDiscount(product.Id)
 
 	log.Println(fmt.Sprintf("Discount applied: %f", discount))
@@ -78,7 +78,7 @@ func (s *Service) applyDiscount(product domain.Product) (domain.Product, int32){
 	return product, discountValue
 }
 
-func (s *Service) mergeProducts(chart *domain.Chart) {
+func (s *CreateCheckoutUseCase) mergeProducts(chart *domain.Chart) {
 	productExists := make(map[int32]domain.ProductChart)
 	var products []domain.ProductChart
 
