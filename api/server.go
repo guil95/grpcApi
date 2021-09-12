@@ -3,7 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	http2 "github.com/guil95/grpcApi/core/infra/http/controllers"
+	controllers "github.com/guil95/grpcApi/core/infra/http/controllers"
 	"log"
 	"net/http"
 	"os"
@@ -25,7 +25,7 @@ func Run(file []byte) {
 		return context.JSON(fiber.Map{"message": "Welcome to hash discount api"})
 	})
 
-	http2.CreateApi(app, file)
+	controllers.CreateApi(app, file)
 
 	log.Fatal(app.Listen(fmt.Sprint(":8000")))
 }

@@ -1,23 +1,23 @@
-package application
+package use_cases
 
 import (
 	"fmt"
-	domain2 "github.com/guil95/grpcApi/core/domain"
+	"github.com/guil95/grpcApi/core/domain"
 	"log"
 	"sync"
 )
 
 type Service struct {
-	client     domain2.Client
-	repository domain2.Repository
+	client     domain.Client
+	repository domain.Repository
 }
 
-func NewService(client domain2.Client, repository domain2.Repository) *Service {
+func NewService(client domain.Client, repository domain.Repository) *Service {
 	return &Service{client: client, repository: repository}
 }
-var order domain2.Order
+var order domain.Order
 
-func (s *Service) Checkout(chart *domain2.Chart) (*domain2.Order, error){
+func (s *Service) Checkout(chart *domain.Chart) (*domain.Order, error){
 	var wg sync.WaitGroup
 
 	s.mergeProducts(chart)
@@ -35,7 +35,7 @@ func (s *Service) Checkout(chart *domain2.Chart) (*domain2.Order, error){
 	for _, product := range products {
 		wg.Add(1)
 
-		go func(product domain2.Product, order *domain2.Order) {
+		go func(product domain.Product, order *domain.Order) {
 			product, discountValue := s.applyDiscount(product)
 			o.AddProduct(product, product.Quantity, discountValue)
 
@@ -50,23 +50,23 @@ func (s *Service) Checkout(chart *domain2.Chart) (*domain2.Order, error){
 	return o, nil
 }
 
-func (s *Service) verifyGiftProducts(products []domain2.Product) error {
+func (s *Service) verifyGiftProducts(products []domain.Product) error {
 	for _, product := range products {
 		if product.Gift == true {
-			return domain2.ProductGiftError
+			return domain.ProductGiftError
 		}
 	}
 
 	return nil
 }
 
-func (s *Service) retrieveProductsByChart(chart *domain2.Chart) []domain2.Product {
+func (s *Service) retrieveProductsByChart(chart *domain.Chart) []domain.Product {
 	products := s.repository.GetProductsByChart(chart)
 
 	return products
 }
 
-func (s *Service) applyDiscount(product domain2.Product) (domain2.Product, int32){
+func (s *Service) applyDiscount(product domain.Product) (domain.Product, int32){
 	discount, _ := s.client.GetDiscount(product.Id)
 
 	log.Println(fmt.Sprintf("Discount applied: %f", discount))
@@ -78,9 +78,9 @@ func (s *Service) applyDiscount(product domain2.Product) (domain2.Product, int32
 	return product, discountValue
 }
 
-func (s *Service) mergeProducts(chart *domain2.Chart) {
-	productExists := make(map[int32]domain2.ProductChart)
-	var products []domain2.ProductChart
+func (s *Service) mergeProducts(chart *domain.Chart) {
+	productExists := make(map[int32]domain.ProductChart)
+	var products []domain.ProductChart
 
 	for _,item := range chart.Products {
 		if _, ok := productExists[item.ProductId]; ok {

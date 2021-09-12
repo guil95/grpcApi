@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"encoding/json"
-	domain2 "github.com/guil95/grpcApi/core/domain"
+	"github.com/guil95/grpcApi/core/domain"
 )
 
 type FileRepository struct {
@@ -13,16 +13,16 @@ func NewFileRepository(db []byte) *FileRepository {
 	return &FileRepository{db: db}
 }
 
-func (fr *FileRepository) GetProducts()[]domain2.Product {
+func (fr *FileRepository) GetProducts()[]domain.Product {
 	return nil
 }
 
-func (fr *FileRepository) GetProductsByChart(chart *domain2.Chart)[]domain2.Product {
-	var products []domain2.Product
+func (fr *FileRepository) GetProductsByChart(chart *domain.Chart)[]domain.Product {
+	var products []domain.Product
 
 	_ = json.Unmarshal([]byte(fr.db), &products)
 
-	var productsFilter []domain2.Product
+	var productsFilter []domain.Product
 	productsChart := chart.Products
 
 	for _, product := range products {

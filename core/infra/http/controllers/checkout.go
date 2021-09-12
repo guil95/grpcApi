@@ -2,23 +2,23 @@ package http
 
 import (
 	"github.com/gofiber/fiber/v2"
-	application2 "github.com/guil95/grpcApi/core/application"
-	domain2 "github.com/guil95/grpcApi/core/domain"
-	clients2 "github.com/guil95/grpcApi/core/infra/http/clients"
-	repositories2 "github.com/guil95/grpcApi/core/infra/repositories"
+	"github.com/guil95/grpcApi/core/domain"
+	"github.com/guil95/grpcApi/core/infra/http/clients"
+	"github.com/guil95/grpcApi/core/infra/repositories"
+	application "github.com/guil95/grpcApi/core/use_cases"
 	"log"
 	"net/http"
 )
 
 func CreateApi(app *fiber.App, file []byte) {
 	app.Post("/checkout", func(ctx *fiber.Ctx) error {
-		checkout(ctx, application2.NewService(clients2.NewDiscountGrpcClient(), repositories2.NewFileRepository(file)))
+		checkout(ctx, application.NewService(clients.NewDiscountGrpcClient(), repositories.NewFileRepository(file)))
 		return nil
 	})
 }
 
-func checkout(ctx *fiber.Ctx, service *application2.Service) {
-	var chartPayload = new(domain2.Chart)
+func checkout(ctx *fiber.Ctx, service *application.Service) {
+	var chartPayload = new(domain.Chart)
 
 	if err := ctx.BodyParser(chartPayload); err != nil {
 		log.Println(err)
@@ -35,7 +35,7 @@ func checkout(ctx *fiber.Ctx, service *application2.Service) {
 	order, err := service.Checkout(chartPayload)
 
 	if err != nil {
-		if err == domain2.ProductGiftError {
+		if err == domain.ProductGiftError {
 			err := ctx.Status(http.StatusUnprocessableEntity).JSON(NewResponseError("Have a product gift in chart"))
 
 			if err != nil {
