@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  discount:
+    container_name: discount
+    image: hashorg/hash-mock-discount-service
+    ports:
+      - 50051:50051
+  checkout:
+    container_name: checkout
+    build:
+      context: .
+    ports:
+    - 8000:8000
