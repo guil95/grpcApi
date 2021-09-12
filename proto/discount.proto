@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package discount;
 
-//protoc --go-grpc_out=./gen proto/discount.proto
-//protoc --go_out=./gen proto/discount.proto
+//protoc --go-grpc_out=./core proto/discount.proto
+//protoc --go_out=./core proto/discount.proto
 option go_package = "./discount";
 
 // Service that return mocked discount percentage.
