@@ -26,6 +26,10 @@ func (s *CreateCheckoutUseCase) Checkout(chart *domain.Chart) (*domain.Order, er
 
 	products := s.retrieveProductsByChart(chart)
 
+	if products == nil {
+		return nil, domain.ProductNotFoundError
+	}
+
 	err := s.verifyGiftProducts(products)
 
 	if err != nil {

@@ -26,6 +26,7 @@ func checkout(ctx *fiber.Ctx, service *use_cases.CreateCheckoutUseCase) {
 		err := ctx.Status(http.StatusUnprocessableEntity).JSON(NewResponseError("Unprocessable entity"))
 
 		if err != nil {
+			log.Println(err)
 			return
 		}
 
@@ -35,29 +36,41 @@ func checkout(ctx *fiber.Ctx, service *use_cases.CreateCheckoutUseCase) {
 	order, err := service.Checkout(chartPayload)
 
 	if err != nil {
-		if err == domain.ProductGiftError {
-			err := ctx.Status(http.StatusUnprocessableEntity).JSON(NewResponseError("Have a product gift in chart"))
-
-			if err != nil {
-				return
-			}
-			return
-		}
-
 		log.Println(err.Error())
 
-		err = ctx.Status(http.StatusInternalServerError).JSON(NewResponseError("Internal Server Error"))
+		switch err {
+			case domain.ProductGiftError:
+				err := ctx.Status(http.StatusUnprocessableEntity).JSON(NewResponseError("Have a product gift in chart"))
 
-		if err != nil {
-			return
+				if err != nil {
+					log.Println(err)
+					return
+				}
+				return
+			case domain.ProductNotFoundError :
+				err := ctx.Status(http.StatusNotFound).JSON(NewResponseError("Products not found"))
+
+				if err != nil {
+					log.Println(err)
+					return
+				}
+				return
+			default:
+				err = ctx.Status(http.StatusInternalServerError).JSON(NewResponseError("Internal Server Error"))
+
+				if err != nil {
+					log.Println(err)
+					return
+				}
+
+				return
 		}
-
-		return
 	}
 
 	err = ctx.Status(http.StatusOK).JSON(order)
 
 	if err != nil {
+		log.Println(err)
 		return
 	}
 
