@@ -13,10 +13,6 @@ func NewFileRepository(db []byte) *FileRepository {
 	return &FileRepository{db: db}
 }
 
-func (fr *FileRepository) GetProducts()[]domain.Product {
-	return nil
-}
-
 func (fr *FileRepository) GetProductsByChart(chart *domain.Chart)[]domain.Product {
 	var products []domain.Product
 
@@ -51,4 +47,12 @@ func (fr *FileRepository) GetGiftProducts()[]domain.Product {
 	}
 
 	return productsFilter
+}
+
+func (fr *FileRepository) GetProducts() []domain.Product {
+	var products []domain.Product
+
+	_ = json.Unmarshal([]byte(fr.db), &products)
+
+	return products
 }

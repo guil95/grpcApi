@@ -34,6 +34,20 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 	return m.recorder
 }
 
+// GetGiftProducts mocks base method.
+func (m *MockRepository) GetGiftProducts() []domain.Product {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGiftProducts")
+	ret0, _ := ret[0].([]domain.Product)
+	return ret0
+}
+
+// GetGiftProducts indicates an expected call of GetGiftProducts.
+func (mr *MockRepositoryMockRecorder) GetGiftProducts() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGiftProducts", reflect.TypeOf((*MockRepository)(nil).GetGiftProducts))
+}
+
 // GetProducts mocks base method.
 func (m *MockRepository) GetProducts() []domain.Product {
 	m.ctrl.T.Helper()

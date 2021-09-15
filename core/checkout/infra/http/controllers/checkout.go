@@ -3,16 +3,22 @@ package http
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/guil95/grpcApi/core/checkout/domain"
-	"github.com/guil95/grpcApi/core/checkout/infra/http/clients"
+	"github.com/guil95/grpcApi/core/checkout/infra/http/rpc/clients"
 	"github.com/guil95/grpcApi/core/checkout/infra/repositories"
 	"github.com/guil95/grpcApi/core/checkout/use_cases"
+	"github.com/guil95/grpcApi/core/discount"
+	"google.golang.org/grpc"
 	"log"
 	"net/http"
 )
 
-func CreateApi(app *fiber.App, file []byte) {
+func CreateApi(app *fiber.App, file []byte, conn grpc.ClientConnInterface) {
 	app.Post("/checkout", func(ctx *fiber.Ctx) error {
-		checkout(ctx, use_cases.NewService(clients.NewDiscountGrpcClient(), repositories.NewFileRepository(file)))
+		checkout(ctx, use_cases.NewService(
+			clients.NewDiscountGrpcClient(discount.NewDiscountClient(conn)),
+			repositories.NewFileRepository(file),
+			),
+		)
 		return nil
 	})
 }
