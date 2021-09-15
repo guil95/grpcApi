@@ -13,7 +13,7 @@ func (o *Order) NewOrder() *Order {
 	return &Order{}
 }
 
-func (o *Order) AddProduct(product Product, quantity int32, discount int32) {
+func (o *Order) AddProduct(product Product, discount int32) {
 	log.Println("Include product in order")
 
 	if product.Gift == true {
@@ -23,10 +23,10 @@ func (o *Order) AddProduct(product Product, quantity int32, discount int32) {
 
 	o.Products = append(o.Products, ProductOrder{
 		Id: product.Id,
-		Quantity: quantity,
+		Quantity: product.Quantity,
 		UnitAmount: product.Amount,
-		TotalAmount: product.Amount*quantity,
-		Discount: discount*quantity,
+		TotalAmount: product.Amount*product.Quantity,
+		Discount: discount*product.Quantity,
 		Gift: product.Gift,
 	})
 }

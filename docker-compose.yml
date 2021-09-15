@@ -9,5 +9,7 @@ services:
     container_name: checkout
     build:
       context: .
+    volumes:
+    - .:/app
     ports:
     - 8000:8000

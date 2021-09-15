@@ -41,7 +41,7 @@ func (s *CreateCheckoutUseCase) Checkout(chart *domain.Chart) (*domain.Order, er
 
 		go func(product domain.Product, order *domain.Order) {
 			product, discountValue := s.applyDiscount(product)
-			o.AddProduct(product, product.Quantity, discountValue)
+			o.AddProduct(product, discountValue)
 
 			defer wg.Done()
 		}(product, o)

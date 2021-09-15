@@ -36,3 +36,19 @@ func (fr *FileRepository) GetProductsByChart(chart *domain.Chart)[]domain.Produc
 
 	return productsFilter
 }
+
+func (fr *FileRepository) GetGiftProducts()[]domain.Product {
+	var products []domain.Product
+
+	_ = json.Unmarshal([]byte(fr.db), &products)
+
+	var productsFilter []domain.Product
+
+	for _, product := range products {
+		if product.Gift == true {
+			productsFilter = append(productsFilter, product)
+		}
+	}
+
+	return productsFilter
+}
