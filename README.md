@@ -1,8 +1,8 @@
 
-#Fluxo
+# Fluxo
 ![fluxo grpcApi](docs/fluxo.png "Fluxo grpcApi")
 
-#Como subir a aplicação
+# Como subir a aplicação
 
 ```shell
 $ make start
@@ -55,7 +55,7 @@ http://localhost:8000/checkout
 }
 ```
 
-#Execução de testes
+# Execução de testes
 ```shell
 $ make test
 ```
