@@ -7,6 +7,8 @@ services:
       - 50051:50051
   checkout:
     container_name: checkout
+    env_file:
+      - .env
     build:
       context: .
     volumes:

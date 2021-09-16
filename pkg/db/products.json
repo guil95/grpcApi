@@ -24,14 +24,14 @@
     "title": "Fantastic Frozen Chair",
     "description": "Et neque debitis omnis quam enim cupiditate.",
     "amount": 56230,
-    "is_gift": false
+    "is_gift": true
   },
   {
     "id": 5,
     "title": "Incredible Concrete Soap",
     "description": "Dolorum nobis temporibus aut dolorem quod qui corrupti.",
     "amount": 42647,
-    "is_gift": false
+    "is_gift": true
   },
   {
     "id": 6,

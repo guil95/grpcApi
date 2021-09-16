@@ -16,12 +16,17 @@ func (o *Order) NewOrder() *Order {
 	return &Order{}
 }
 
-func (o *Order) AddProduct(product Product, discount int32) error{
+func (o *Order) AddProduct(product *Product, discount int32) {
 	log.Println("Include product in order")
+
+	if product == nil {
+		return
+	}
 
 	if product.Gift == true {
 		product.Amount = 0
 		discount = 0
+		product.Quantity = 1
 	}
 
 	o.Products = append(o.Products, ProductOrder{
@@ -32,8 +37,6 @@ func (o *Order) AddProduct(product Product, discount int32) error{
 		Discount: discount*product.Quantity,
 		Gift: product.Gift,
 	})
-
-	return nil
 }
 
 func (o *Order) CalcTotals() {

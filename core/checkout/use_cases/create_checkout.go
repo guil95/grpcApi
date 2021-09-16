@@ -2,18 +2,22 @@ package use_cases
 
 import (
 	"fmt"
+	"github.com/guil95/grpcApi/config"
 	"github.com/guil95/grpcApi/core/checkout/domain"
 	"log"
+	"math/rand"
 	"sync"
+	"time"
 )
 
 type CreateCheckoutUseCase struct {
 	client     domain.Client
 	repository domain.Repository
+	conf 	   config.Config
 }
 
-func NewCreateCheckoutUseCase(client domain.Client, repository domain.Repository) *CreateCheckoutUseCase {
-	return &CreateCheckoutUseCase{client: client, repository: repository}
+func NewCreateCheckoutUseCase(client domain.Client, repository domain.Repository, conf config.Config) *CreateCheckoutUseCase {
+	return &CreateCheckoutUseCase{client: client, repository: repository, conf: conf}
 }
 var order domain.Order
 
@@ -41,13 +45,15 @@ func (s *CreateCheckoutUseCase) Checkout(chart *domain.Chart)(*domain.Order, err
 
 		go func(product domain.Product, order *domain.Order) {
 			product, discountValue := s.applyDiscount(product)
-			o.AddProduct(product, discountValue)
+			o.AddProduct(&product, discountValue)
 
 			defer wg.Done()
 		}(product, o)
 	}
 
 	wg.Wait()
+
+	s.addBlackFridayProduct(o)
 
 	o.CalcTotals()
 
@@ -103,4 +109,22 @@ func (s *CreateCheckoutUseCase) mergeProducts(chart *domain.Chart) {
 	}
 
 	chart.Products = products
+}
+
+func (s *CreateCheckoutUseCase) addBlackFridayProduct(order *domain.Order) {
+	if s.conf.BlackFridayDate.Truncate(24*time.Hour) == time.Now().UTC().Truncate(24*time.Hour) {
+		order.AddProduct(s.retrieveGiftProduct(), int32(0))
+	}
+}
+
+func (s *CreateCheckoutUseCase) retrieveGiftProduct() *domain.Product{
+	giftProducts := s.repository.GetGiftProducts()
+
+	if giftProducts == nil {
+		return nil
+	}
+
+	randIndexGiftProduct := rand.Intn(len(giftProducts) - 0) + 0
+
+	return &giftProducts[randIndexGiftProduct]
 }
