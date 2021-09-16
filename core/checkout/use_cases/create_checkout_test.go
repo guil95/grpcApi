@@ -21,7 +21,7 @@ func TestCheckout(t *testing.T) {
 
 		r.EXPECT().GetProductsByChart(chart).Return(nil).Times(1)
 
-		service := use_cases.NewService(c, r)
+		service := use_cases.NewCreateCheckoutUseCase(c, r)
 
 		_,err := service.Checkout(chart)
 
@@ -44,7 +44,7 @@ func TestCheckout(t *testing.T) {
 			Quantity: 1,
 		}}).Times(1)
 
-		service := use_cases.NewService(c, r)
+		service := use_cases.NewCreateCheckoutUseCase(c, r)
 
 		_,err := service.Checkout(chart)
 
@@ -69,7 +69,7 @@ func TestCheckout(t *testing.T) {
 
 		c.EXPECT().GetDiscount(int32(1)).Return(float32(0.5), nil).Times(1)
 
-		service := use_cases.NewService(c, r)
+		service := use_cases.NewCreateCheckoutUseCase(c, r)
 
 		order,err := service.Checkout(chart)
 
@@ -100,7 +100,7 @@ func TestCheckout(t *testing.T) {
 
 		c.EXPECT().GetDiscount(int32(1)).Return(float32(0.5), nil).Times(1)
 
-		service := use_cases.NewService(c, r)
+		service := use_cases.NewCreateCheckoutUseCase(c, r)
 
 		order,err := service.Checkout(chart)
 
@@ -130,7 +130,7 @@ func TestCheckout(t *testing.T) {
 
 		c.EXPECT().GetDiscount(int32(1)).Return(float32(0), errors.New("Qualquer erro")).Times(1)
 
-		service := use_cases.NewService(c, r)
+		service := use_cases.NewCreateCheckoutUseCase(c, r)
 
 		order,err := service.Checkout(chart)
 

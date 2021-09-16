@@ -12,7 +12,7 @@ type CreateCheckoutUseCase struct {
 	repository domain.Repository
 }
 
-func NewService(client domain.Client, repository domain.Repository) *CreateCheckoutUseCase {
+func NewCreateCheckoutUseCase(client domain.Client, repository domain.Repository) *CreateCheckoutUseCase {
 	return &CreateCheckoutUseCase{client: client, repository: repository}
 }
 var order domain.Order

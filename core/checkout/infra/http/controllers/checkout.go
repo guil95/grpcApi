@@ -14,7 +14,7 @@ import (
 
 func CreateApi(app *fiber.App, file []byte, conn grpc.ClientConnInterface) {
 	app.Post("/checkout", func(ctx *fiber.Ctx) error {
-		checkout(ctx, use_cases.NewService(
+		checkout(ctx, use_cases.NewCreateCheckoutUseCase(
 			clients.NewDiscountGrpcClient(discount.NewDiscountClient(conn)),
 			repositories.NewFileRepository(file),
 			),
@@ -23,20 +23,20 @@ func CreateApi(app *fiber.App, file []byte, conn grpc.ClientConnInterface) {
 	})
 }
 
-func checkout(ctx *fiber.Ctx, service *use_cases.CreateCheckoutUseCase) {
+func checkout(ctx *fiber.Ctx, service domain.UseCase) error {
 	var chartPayload = new(domain.Chart)
 
 	if err := ctx.BodyParser(chartPayload); err != nil {
 		log.Println(err)
 
-		err := ctx.Status(http.StatusUnprocessableEntity).JSON(NewResponseError("Unprocessable entity"))
+		err := ctx.Status(http.StatusUnprocessableEntity).JSON(newResponseError("Unprocessable entity"))
 
 		if err != nil {
 			log.Println(err)
-			return
+			return nil
 		}
 
-		return
+		return nil
 	}
 
 	order, err := service.Checkout(chartPayload)
@@ -46,30 +46,30 @@ func checkout(ctx *fiber.Ctx, service *use_cases.CreateCheckoutUseCase) {
 
 		switch err {
 			case domain.ProductGiftError:
-				err := ctx.Status(http.StatusUnprocessableEntity).JSON(NewResponseError("Have a product gift in chart"))
+				err := ctx.Status(http.StatusUnprocessableEntity).JSON(newResponseError("Have a product gift in chart"))
 
 				if err != nil {
 					log.Println(err)
-					return
+					return nil
 				}
-				return
+				return nil
 			case domain.ProductNotFoundError :
-				err := ctx.Status(http.StatusNotFound).JSON(NewResponseError("Products not found"))
+				err := ctx.Status(http.StatusNotFound).JSON(newResponseError("Products not found"))
 
 				if err != nil {
 					log.Println(err)
-					return
+					return nil
 				}
-				return
+				return nil
 			default:
-				err = ctx.Status(http.StatusInternalServerError).JSON(NewResponseError("Internal Server Error"))
+				err = ctx.Status(http.StatusInternalServerError).JSON(newResponseError("Internal Server Error"))
 
 				if err != nil {
 					log.Println(err)
-					return
+					return nil
 				}
 
-				return
+				return nil
 		}
 	}
 
@@ -77,17 +77,17 @@ func checkout(ctx *fiber.Ctx, service *use_cases.CreateCheckoutUseCase) {
 
 	if err != nil {
 		log.Println(err)
-		return
+		return nil
 	}
 
-	return
+	return nil
 }
 
 type ResponseError struct {
 	Message string `json:"message"`
 }
 
-func NewResponseError(message string) ResponseError {
+func newResponseError(message string) ResponseError {
 	return ResponseError{
 		Message: message,
 	}
