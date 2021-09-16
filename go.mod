@@ -4,9 +4,12 @@ go 1.16
 
 require (
 	github.com/andybalholm/brotli v1.0.3 // indirect
+	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/go-playground/validator/v10 v10.9.0 // indirect
 	github.com/gofiber/fiber/v2 v2.18.0 // indirect
 	github.com/golang/mock v1.6.0 // indirect
+	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/klauspost/compress v1.13.5 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/valyala/fasthttp v1.30.0 // indirect

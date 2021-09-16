@@ -1,6 +1,9 @@
 package domain
 
-import "log"
+import (
+	"errors"
+	"log"
+)
 
 type Order struct {
 	TotalAmount int32             `json:"total_amount"`
@@ -13,7 +16,7 @@ func (o *Order) NewOrder() *Order {
 	return &Order{}
 }
 
-func (o *Order) AddProduct(product Product, discount int32) {
+func (o *Order) AddProduct(product Product, discount int32) error{
 	log.Println("Include product in order")
 
 	if product.Gift == true {
@@ -29,6 +32,8 @@ func (o *Order) AddProduct(product Product, discount int32) {
 		Discount: discount*product.Quantity,
 		Gift: product.Gift,
 	})
+
+	return nil
 }
 
 func (o *Order) CalcTotals() {
@@ -46,3 +51,5 @@ func (o *Order) CalcTotals() {
 	o.TotalAmountWithDiscount = totalAmountWithDiscount
 	o.TotalDiscount = totalDiscount
 }
+
+var UnprocessableEntity = errors.New("UnprocessableEntity")

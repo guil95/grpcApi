@@ -1,5 +1,5 @@
 package domain
 
-type UseCase interface {
+type CreateCheckoutUseCase interface {
 	Checkout(chart *Chart)(*Order, error)
 }

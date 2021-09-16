@@ -17,7 +17,7 @@ func NewCreateCheckoutUseCase(client domain.Client, repository domain.Repository
 }
 var order domain.Order
 
-func (s *CreateCheckoutUseCase) Checkout(chart *domain.Chart) (*domain.Order, error){
+func (s *CreateCheckoutUseCase) Checkout(chart *domain.Chart)(*domain.Order, error){
 	var wg sync.WaitGroup
 
 	s.mergeProducts(chart)

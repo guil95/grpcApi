@@ -1,9 +1,12 @@
 package api
 
 import (
-	"fmt"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gorilla/mux"
 	checkoutControllers "github.com/guil95/grpcApi/core/checkout/infra/http/controllers"
+	"github.com/guil95/grpcApi/core/checkout/infra/http/rpc/clients"
+	"github.com/guil95/grpcApi/core/checkout/infra/repositories"
+	"github.com/guil95/grpcApi/core/checkout/use_cases"
+	"github.com/guil95/grpcApi/core/discount"
 	pkg "github.com/guil95/grpcApi/pkg/grpc"
 	"log"
 	"net/http"
@@ -15,19 +18,13 @@ func Run(file []byte) {
 
 	log.Println("Listen server on "+ port)
 
-	app := fiber.New()
-
-	app.Get("/", func(context *fiber.Ctx) error {
-		err := context.SendStatus(http.StatusOK)
-		if err != nil {
-			return nil
-		}
-
-		return context.JSON(fiber.Map{"message": "Welcome to hash discount api"})
-	})
+	r := mux.NewRouter()
 
 	conn := pkg.Conn()
-	checkoutControllers.CreateApi(app, file, conn)
+	client := clients.NewDiscountGrpcClient(discount.NewDiscountClient(conn))
+	repo := repositories.NewFileRepository(file)
 
-	log.Fatal(app.Listen(fmt.Sprint(":8000")))
+	checkoutControllers.MakeCheckoutHandler(r, use_cases.NewCreateCheckoutUseCase(client, repo))
+
+	log.Fatal(http.ListenAndServe(":8000", r))
 }

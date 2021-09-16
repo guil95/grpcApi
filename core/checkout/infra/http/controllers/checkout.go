@@ -1,86 +1,79 @@
 package http
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"encoding/json"
+	"github.com/asaskevich/govalidator"
+	"github.com/gorilla/mux"
 	"github.com/guil95/grpcApi/core/checkout/domain"
-	"github.com/guil95/grpcApi/core/checkout/infra/http/rpc/clients"
-	"github.com/guil95/grpcApi/core/checkout/infra/repositories"
-	"github.com/guil95/grpcApi/core/checkout/use_cases"
-	"github.com/guil95/grpcApi/core/discount"
-	"google.golang.org/grpc"
 	"log"
 	"net/http"
 )
 
-func CreateApi(app *fiber.App, file []byte, conn grpc.ClientConnInterface) {
-	app.Post("/checkout", func(ctx *fiber.Ctx) error {
-		checkout(ctx, use_cases.NewCreateCheckoutUseCase(
-			clients.NewDiscountGrpcClient(discount.NewDiscountClient(conn)),
-			repositories.NewFileRepository(file),
-			),
-		)
-		return nil
-	})
+func MakeCheckoutHandler(r *mux.Router, service domain.CreateCheckoutUseCase) {
+	r.Handle("/checkout", checkout(service)).Methods("POST", "OPTIONS").Name("create_checkout")
 }
 
-func checkout(ctx *fiber.Ctx, service domain.UseCase) error {
-	var chartPayload = new(domain.Chart)
+func checkout(service domain.CreateCheckoutUseCase) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+		var chartPayload domain.Chart
 
-	if err := ctx.BodyParser(chartPayload); err != nil {
-		log.Println(err)
+		if err := json.NewDecoder(r.Body).Decode(&chartPayload); err != nil {
+			log.Println(err.Error())
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(newResponseError("Internal server error"))
+			return
+		}
 
-		err := ctx.Status(http.StatusUnprocessableEntity).JSON(newResponseError("Unprocessable entity"))
+		if !isValidRequest(chartPayload) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			json.NewEncoder(w).Encode(newResponseError("Unprocessable entity"))
+			return
+		}
+
+		err := chartPayload.Validate()
 
 		if err != nil {
-			log.Println(err)
-			return nil
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			json.NewEncoder(w).Encode(newResponseError("Unprocessable entity"))
+			return
 		}
 
-		return nil
-	}
+		order, err := service.Checkout(&chartPayload)
 
-	order, err := service.Checkout(chartPayload)
+		if err != nil {
+			log.Println(err.Error())
 
-	if err != nil {
-		log.Println(err.Error())
-
-		switch err {
+			switch err {
 			case domain.ProductGiftError:
-				err := ctx.Status(http.StatusUnprocessableEntity).JSON(newResponseError("Have a product gift in chart"))
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusUnprocessableEntity)
+				json.NewEncoder(w).Encode(newResponseError("Have a product gift in chart"))
 
-				if err != nil {
-					log.Println(err)
-					return nil
-				}
-				return nil
+				return
 			case domain.ProductNotFoundError :
-				err := ctx.Status(http.StatusNotFound).JSON(newResponseError("Products not found"))
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusNotFound)
+				json.NewEncoder(w).Encode(newResponseError("Products not found"))
 
-				if err != nil {
-					log.Println(err)
-					return nil
-				}
-				return nil
+				return
 			default:
-				err = ctx.Status(http.StatusInternalServerError).JSON(newResponseError("Internal Server Error"))
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(newResponseError("Internal server error"))
 
-				if err != nil {
-					log.Println(err)
-					return nil
-				}
-
-				return nil
+				return
+			}
 		}
-	}
 
-	err = ctx.Status(http.StatusOK).JSON(order)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(order)
 
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-
-	return nil
+		return
+	})
 }
 
 type ResponseError struct {
@@ -91,4 +84,13 @@ func newResponseError(message string) ResponseError {
 	return ResponseError{
 		Message: message,
 	}
+}
+
+func isValidRequest(payload interface{}) bool {
+	govalidator.SetFieldsRequiredByDefault(true)
+	if _, err := govalidator.ValidateStruct(payload); err != nil {
+		log.Println(err.Error())
+		return false
+	}
+	return true
 }
