@@ -2,7 +2,7 @@
 #Fluxo
 ![fluxo grpcApi](docs/fluxo.png "Fluxo grpcApi")
 
-#Como subir a aplicação
+# Como subir a aplicação
 
 ```shell
 $ make start
