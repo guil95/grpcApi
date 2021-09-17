@@ -2,6 +2,21 @@
 # Fluxo
 ![fluxo grpcApi](docs/fluxo.png "Fluxo grpcApi")
 
+# Estruturação do projeto
+    └─── api (Configuração do server)
+    └─── config (Variáveis de ambiente)
+    └─── core (Domínios da aplicação)
+         └───checkout(Agregado de checkout)
+            └───domain(Domínios que compõe o agregado checkout)
+            └───infra(Implementações das camadas externas do agregado)
+            └───use_cases(Casos de uso das regras de negócio do agregado)
+         └───discount(Client grpc do agregadodiscount)
+    └─── docs (Desenho do fluxo da aplicação)
+    └─── pkg (Conexões externas)
+        └─── db (Arquivo para banco de dados)
+        └─── grpc (Conexão com o server grpc)
+    └─── proto (Arquivo de contrato para client grpc)
+
 # Como subir a aplicação
 
 ```shell
