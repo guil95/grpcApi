@@ -74,3 +74,7 @@ http://localhost:8000/checkout
 ```shell
 $ make test
 ```
+
+# Regra Black friday
+Alterar a env `BLACK_FRIDAY_DATE` no arquivo .env para data que desejar no formato `Ano-mês-dia` e rodar `make start` 
+para aplicar a alteração.
