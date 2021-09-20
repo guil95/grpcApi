@@ -10,7 +10,7 @@
             └───domain(Domínios que compõe o agregado checkout)
             └───infra(Implementações das camadas externas do agregado)
             └───use_cases(Casos de uso das regras de negócio do agregado)
-         └───discount(Client grpc do agregadodiscount)
+         └───discount(Client grpc do agregado discount)
     └─── docs (Desenho do fluxo da aplicação)
     └─── pkg (Conexões externas)
         └─── db (Arquivo para banco de dados)
