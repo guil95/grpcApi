@@ -25,7 +25,7 @@ $ make start
 
 # Rota
 ````shell
-http://localhost:8000/checkout
+POST http://localhost:8000/checkout
 ````
 ### Exemplo de payload
 ```json
@@ -35,7 +35,7 @@ http://localhost:8000/checkout
             "id": 1,
             "quantity": 1
         },
-			  {
+	{
             "id": 2,
             "quantity": 1
         }
