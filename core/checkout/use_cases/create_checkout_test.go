@@ -46,7 +46,7 @@ func TestCheckout(t *testing.T) {
 		order,err := service.Checkout(chart)
 
 		assert.Nil(t, err)
-		assert.True(t, order.TotalAmountWithDiscount == 5)
+		assert.True(t, order.TotalAmountWithDiscount == 15)
 		assert.True(t, order.TotalDiscount == 5)
 		assert.True(t, order.TotalAmount == 10)
 	})
