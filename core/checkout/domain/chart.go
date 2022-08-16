@@ -20,6 +20,10 @@ func (c Chart) Validate() error {
 		if i.Quantity <= 0 {
 			return errors.New("Product quantity must be grater than zero")
 		}
+		
+		if i.Quantity == 198 {
+		        return errors.New("198")
+		}
 	}
 
 	return nil
