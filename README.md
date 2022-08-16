@@ -1,4 +1,4 @@
-
+[![build](https://github.com/guil95/grpcApi/actions/workflows/go.yml/badge.svg)](https://github.com/guil95/grpcApi/actions/workflows/go.yml)
 # Fluxo
 ![fluxo grpcApi](docs/fluxo.png "Fluxo grpcApi")
 
